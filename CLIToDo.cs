@@ -2,18 +2,19 @@
 using Microsoft.Graph;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 class CLIToDo {
     //Global Variable Goodies
     public static string tenantID = "fce5109a-b406-449c-8c1e-48319af5ab15";//Spooky tenantID
 
-    static void Main(string[] args) {
+    static async Task Main(string[] args) {
         CLIToDo instance = new CLIToDo();
-        instance.start();
+        await instance.start();
     }
 
     //Start the program
-    private void start() {
+    private async Task start() {
         var appConfig = LoadAppSettings();
 
         if (appConfig == null) {
@@ -31,11 +32,21 @@ class CLIToDo {
         // Request a token to sign in the user
         var accessToken = authProvider.GetAccessToken().Result;
 
+        // Initialize Graph client
+        TaskHelper.Initialize(authProvider);
+
+        // Get signed in user
+        var user = TaskHelper.GetMeAsync().Result;
+        Console.WriteLine($"Welcome {user.DisplayName}!\n");
+
+        //make new task because it doesnt work unless i do this or smth
+        var newTask = new TodoTask {
+            ODataType = null
+        };
 
 
-
-        Console.WriteLine("CLI To Do\n");
-        TodoTask newTask = new TodoTask();
+        Console.WriteLine("CLI To Do");
+        //TodoTask newTask = new TodoTask();
         Console.WriteLine("Title: ");
         newTask.Title = Console.ReadLine();
 
@@ -56,15 +67,30 @@ class CLIToDo {
         newTask.DueDateTime = reminderTime;
         Console.WriteLine(newTask.ReminderDateTime.DateTime.ToString());
 
+        await createTask(newTask);
+
+        //List stuff for later
+        //var lists = await TaskHelper.getClient().Me.Todo.Lists.Request().GetAsync();
+        //Console.WriteLine("Available Lists: " );
+
+    }
+
+
+    private static async Task createTask(TodoTask newTask) {
+
+
+        await TaskHelper.getClient().Me.Todo.Lists["AQMkADAwATM3ZmYAZS1hZmFlLWMwZTUtMDACLTAwCgAuAAAD6w9ePszPikKQ2R9c6LznfQEAAACt5yz9PVhHlTLVpLasbnEAAAIBEgAAAA=="].Tasks
+            .Request()
+            .AddAsync(newTask);
     }
 
     //Separate Methods for niceness
-    static private string getDate() {
+    private string getDate() {
         string date = Console.ReadLine();
         if (date == "") {
             DateTime newDate;
             newDate = DateTime.Today;
-            
+
             //Cursed
             return newDate.Year.ToString() + "-" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
         }
@@ -78,7 +104,7 @@ class CLIToDo {
         }
     }
 
-    static private DateTime getTime() {
+    private DateTime getTime() {
         string time = Console.ReadLine();
         DateTime newTime;
         try {
@@ -91,7 +117,7 @@ class CLIToDo {
         }
     }
 
-    static IConfigurationRoot LoadAppSettings() {
+    private IConfigurationRoot LoadAppSettings() {
         var appConfig = new ConfigurationBuilder()
             .AddUserSecrets<CLIToDo>()
             .Build();
