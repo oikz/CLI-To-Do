@@ -65,7 +65,7 @@ class CLIToDo {
         reminderTime.TimeZone = "Pacific/Auckland";
         reminderTime.DateTime = dateString + "T" + newTime.TimeOfDay.ToString() + ".0000000";
         newTask.ReminderDateTime = reminderTime;
-        //newTask.DueDateTime = reminderTime;
+        newTask.DueDateTime = reminderTime;
         Console.WriteLine(newTask.ReminderDateTime.DateTime.ToString());
 
         await createTask(newTask);
