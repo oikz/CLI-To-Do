@@ -19,15 +19,19 @@ class CLIToDo {
         newTask.Title = Console.ReadLine();
         Console.WriteLine("Date: Format: YYYY-MM-DD (Empty for today)");
         //Cursed
+        string date;
+        DateTime newDate;
+        DateTime newTime = new DateTime();
         while (true) {
 
-            string date = Console.ReadLine();
+            date = Console.ReadLine();
             if (date == "") {
                 date = DateTime.Today.ToString("yyyy/mm/dd");
                 break;
             }
             try {
-                Convert.ToDateTime(date);
+                newDate = Convert.ToDateTime(date);
+                break;
             }
             catch {
                 Console.WriteLine("Try Again");
@@ -35,7 +39,20 @@ class CLIToDo {
 
         }
         Console.WriteLine("Time: ");
-        string time = Console.ReadLine();
+        while (true) {
+
+            string time = Console.ReadLine();
+            /*try {
+                newTime.);
+                Console.WriteLine(newTime.ToString());
+                break;
+            }
+            catch {
+                Console.WriteLine("Try Again");
+                Console.WriteLine(newTime.ToString());
+            }*/
+
+        }
         DateTimeTimeZone reminderTime = new DateTimeTimeZone();
         reminderTime.TimeZone = "Pacific/Auckland";
         //reminderTime.DateTime =
