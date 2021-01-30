@@ -60,11 +60,12 @@ class CLIToDo {
         newTime = getTime();
 
         //Set all the juicy task info
-        DateTimeTimeZone reminderTime = new DateTimeTimeZone();
+        var reminderTime = new DateTimeTimeZone();
+        reminderTime.ODataType = null;//Required for whatever reason
         reminderTime.TimeZone = "Pacific/Auckland";
-        reminderTime.DateTime = dateString + "T" + newTime.TimeOfDay.ToString();
+        reminderTime.DateTime = dateString + "T" + newTime.TimeOfDay.ToString() + ".0000000";
         newTask.ReminderDateTime = reminderTime;
-        newTask.DueDateTime = reminderTime;
+        //newTask.DueDateTime = reminderTime;
         Console.WriteLine(newTask.ReminderDateTime.DateTime.ToString());
 
         await createTask(newTask);
@@ -92,11 +93,20 @@ class CLIToDo {
             newDate = DateTime.Today;
 
             //Cursed
-            return newDate.Year.ToString() + "-" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
+            if (newDate.Month < 10) {
+                return newDate.Year.ToString() + "-0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
+            } else {
+                return newDate.Year.ToString() + "0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
+            }
         }
         try {
             DateTime newDate = Convert.ToDateTime(date);
-            return newDate.Year.ToString() + "-" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
+            if (newDate.Month < 10) {
+                return newDate.Year.ToString() + "-0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
+            }
+            else {
+                return newDate.Year.ToString() + "0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
+            }
         }
         catch {
             Console.WriteLine("Try Again");

@@ -23,6 +23,7 @@ public class DeviceCodeAuthProvider : IAuthenticationProvider {
         // If there is no saved user account, the user must sign-in
         if (_userAccount == null) {
             try {
+
                 // Invoke device code flow so user can sign-in with a browser
                 var result = await _msalClient.AcquireTokenWithDeviceCode(_scopes, callback => {
                     Console.WriteLine(callback.Message);
