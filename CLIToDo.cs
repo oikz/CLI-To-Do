@@ -24,34 +24,40 @@ class CLIToDo {
         TodoTask newTask = new TodoTask();
         Console.WriteLine("Title: ");
         newTask.Title = Console.ReadLine();
+
+
+        DateTime newTime;
+
         Console.WriteLine("Date: Format: YYYY-MM-DD (Empty for today)");
-        //Cursed
-        string date;
+        string dateString = getDate();
 
-        //VS was complaining about uninitialized vars
-        DateTime newDate = new DateTime();
-        DateTime newTime = new DateTime();
-
-        newDate = getDate();
         Console.WriteLine("Time: ");
         newTime = getTime();
 
+        //Set all the juicy task info
         DateTimeTimeZone reminderTime = new DateTimeTimeZone();
         reminderTime.TimeZone = "Pacific/Auckland";
-        reminderTime.DateTime = newDate.ToString() + "T" + newTime.ToString();
+        reminderTime.DateTime = dateString + "T" + newTime.TimeOfDay.ToString();
         newTask.ReminderDateTime = reminderTime;
+        newTask.DueDateTime = reminderTime;
+        Console.WriteLine(newTask.ReminderDateTime.DateTime.ToString());
+        //Console.WriteLine(newTask.DueDateTime.ToString());
 
     }
 
     //Separate Methods for niceness
-    static private DateTime getDate() {
+    static private string getDate() {
         string date = Console.ReadLine();
         if (date == "") {
-            return DateTime.Today;
+            DateTime newDate;
+            newDate = DateTime.Today;
+            
+            //Cursed
+            return newDate.Year.ToString() + "-" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
         }
         try {
             DateTime newDate = Convert.ToDateTime(date);
-            return newDate;
+            return newDate.Year.ToString() + "-" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
         }
         catch {
             Console.WriteLine("Try Again");
