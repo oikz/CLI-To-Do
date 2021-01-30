@@ -1,14 +1,11 @@
 ﻿using System;
 using Microsoft.Graph;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 
 class CLIToDo {
     //Global Variable Goodies
     public static string tenantID = "fce5109a-b406-449c-8c1e-48319af5ab15";//Spooky tenantID
-    public static string appID = "0123aef1-0156-455a-a2ce-1e59d4595e79";
-    public static string[] graphScopes;
-    public static GraphServiceClient graphClient;
 
     static void Main(string[] args) {
         CLIToDo instance = new CLIToDo();
@@ -17,7 +14,24 @@ class CLIToDo {
 
     //Start the program
     private void start() {
-        graphScopes = new[] { "User.Read", "Tasks.ReadWrite" };
+        var appConfig = LoadAppSettings();
+
+        if (appConfig == null) {
+            Console.WriteLine("Missing or invalid appsettings.json...exiting");
+            return;
+        }
+
+        var appId = appConfig["appId"];
+        var scopesString = appConfig["scopes"];
+        var scopes = scopesString.Split(';');
+
+        // Initialize the auth provider with values from appsettings.json
+        var authProvider = new DeviceCodeAuthProvider(appId, scopes);
+
+        // Request a token to sign in the user
+        var accessToken = authProvider.GetAccessToken().Result;
+
+
 
 
         Console.WriteLine("CLI To Do\n");
@@ -41,7 +55,6 @@ class CLIToDo {
         newTask.ReminderDateTime = reminderTime;
         newTask.DueDateTime = reminderTime;
         Console.WriteLine(newTask.ReminderDateTime.DateTime.ToString());
-        //Console.WriteLine(newTask.DueDateTime.ToString());
 
     }
 
@@ -76,5 +89,19 @@ class CLIToDo {
             Console.WriteLine("Try Again");
             return getTime();
         }
+    }
+
+    static IConfigurationRoot LoadAppSettings() {
+        var appConfig = new ConfigurationBuilder()
+            .AddUserSecrets<CLIToDo>()
+            .Build();
+
+        // Check for required settings
+        if (string.IsNullOrEmpty(appConfig["appId"]) ||
+            string.IsNullOrEmpty(appConfig["scopes"])) {
+            return null;
+        }
+
+        return appConfig;
     }
 }
