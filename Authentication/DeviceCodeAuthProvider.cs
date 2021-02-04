@@ -4,6 +4,7 @@ using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using File = System.IO.File;
 
 public class DeviceCodeAuthProvider : IAuthenticationProvider {
     private IPublicClientApplication _msalClient;
@@ -21,6 +22,10 @@ public class DeviceCodeAuthProvider : IAuthenticationProvider {
 
     public async Task<string> GetAccessToken() {
         // If there is no saved user account, the user must sign-in
+        if (File.Exists("Token.txt"))
+        {
+            return await File.ReadAllTextAsync("Token.txt");
+        }
         if (_userAccount == null) {
             try {
 
@@ -31,6 +36,12 @@ public class DeviceCodeAuthProvider : IAuthenticationProvider {
                 }).ExecuteAsync();
 
                 _userAccount = result.Account;
+                //save useraccount or smth, ik its jank and insecure but eh
+                string[] token = {result.AccessToken};  
+                File.Delete("Token.txt");
+                File.WriteAllLines("Token.txt", token);
+                
+                
                 return result.AccessToken;
             }
             catch (Exception exception) {
