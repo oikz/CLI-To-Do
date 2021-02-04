@@ -17,40 +17,48 @@ public class DeviceCodeAuthProvider : IAuthenticationProvider {
         _msalClient = PublicClientApplicationBuilder
             .Create(appId)
             .WithAuthority(AadAuthorityAudience.AzureAdAndPersonalMicrosoftAccount, true)
+            .WithRedirectUri("http://localhost:8383")
             .Build();
+        TokenCacheHelper.EnableSerialization(_msalClient.UserTokenCache);
     }
-
+    
     public async Task<string> GetAccessToken() {
-        // If there is no saved user account, the user must sign-in
-        if (_userAccount == null) {
-            try {
-
-                // Invoke device code flow so user can sign-in with a browser
-                var result = await _msalClient.AcquireTokenWithDeviceCode(_scopes, callback => {
-                    Console.WriteLine(callback.Message);
-                    return Task.FromResult(0);
-                }).ExecuteAsync();
-
-                _userAccount = result.Account;
-                //save useraccount or smth, ik its jank and insecure but eh
+        //First tries to get a token from the cache
+        try {
+            string previousLogin = "";
+            previousLogin = await File.ReadAllTextAsync("prevUser.txt");
+            previousLogin = previousLogin.Split("\r")[0];//Evil formatting
+            var result = await _msalClient
+                .AcquireTokenSilent(_scopes, previousLogin)
+                .ExecuteAsync();
+            return result.AccessToken;
+        }
+        catch (Exception e) {
+            // If there is no saved user account, the user must sign-in
+            if (_userAccount == null) {
+                try {
+                    // Let user sign in
+                    var result = await _msalClient.AcquireTokenInteractive(_scopes).ExecuteAsync();
+                    _userAccount = result.Account;
+                    string[] lines = {_userAccount.Username};
+                    File.WriteAllLines("prevUser.txt", lines);//Questionable saving of previous user but its just a username and is local so should be fine
+                    return result.AccessToken;
+                }
+                catch (Exception exception) {
+                    Console.WriteLine($"Error getting access token: {exception.Message}");
+                    return null;
+                }
+            }
+            else {
+                // If there is an account, call AcquireTokenSilent
+                // By doing this, MSAL will refresh the token automatically if
+                // it is expired. Otherwise it returns the cached token.
+                var result = await _msalClient
+                    .AcquireTokenSilent(_scopes, _userAccount)
+                    .ExecuteAsync();
 
                 return result.AccessToken;
             }
-            catch (Exception exception) {
-                Console.WriteLine($"Error getting access token: {exception.Message}");
-                return null;
-            }
-        }
-        else {
-            // If there is an account, call AcquireTokenSilent
-            // By doing this, MSAL will refresh the token automatically if
-            // it is expired. Otherwise it returns the cached token.
-
-            var result = await _msalClient
-                .AcquireTokenSilent(_scopes, _userAccount)
-                .ExecuteAsync();
-
-            return result.AccessToken;
         }
     }
 

@@ -29,20 +29,20 @@ class CLIToDo {
 
         // Initialize the auth provider with values from appsettings.json
         var authProvider = new DeviceCodeAuthProvider(appId, scopes);
-        
+
         // Initialize Graph client
         TaskHelper.Initialize(authProvider);
 
         // Get signed in user
         var user = TaskHelper.GetMeAsync().Result;
-        Console.WriteLine($"Welcome {user.DisplayName}!\n");
+        Console.WriteLine($"Welcome {user.DisplayName}!");
 
         //make new task because it doesnt work unless i do this or smth
         var newTask = new TodoTask {
             ODataType = null
         };
-        
-        Console.WriteLine("Title: ");
+
+        Console.Write("Title: ");
         newTask.Title = Console.ReadLine();
 
 
@@ -51,12 +51,12 @@ class CLIToDo {
         Console.WriteLine("Date: Format: YYYY-MM-DD (Empty for today)");
         string dateString = getDate();
 
-        Console.WriteLine("Time: ");
+        Console.Write("Time: ");
         newTime = getTime();
 
         //Set all the juicy task info
         var reminderTime = new DateTimeTimeZone();
-        reminderTime.ODataType = null;//Required for whatever reason
+        reminderTime.ODataType = null; //Required for whatever reason
         reminderTime.TimeZone = "Pacific/Auckland";
         reminderTime.DateTime = dateString + "T" + newTime.TimeOfDay.ToString() + ".0000000";
         newTask.ReminderDateTime = reminderTime;
@@ -67,9 +67,9 @@ class CLIToDo {
         }
 
         newTask.DueDateTime = reminderTime;
-        Console.WriteLine(newTask.ReminderDateTime.DateTime);
-
-        //List stuff for later
+        //Console.WriteLine(newTask.ReminderDateTime.DateTime);
+        
+        //just get the first list (default Tasks list)
         var lists = await TaskHelper.getClient().Me.Todo.Lists.Request().GetAsync();
         string listID = lists.ElementAt(0).Id;
         //Console.WriteLine("Available Lists: " );
@@ -79,19 +79,11 @@ class CLIToDo {
 
 
     private static async Task CreateTask(TodoTask newTask, string listID) {
-        //try {
-            await TaskHelper.getClient().Me.Todo
-                .Lists[listID]
-                .Tasks
-                .Request()
-                .AddAsync(newTask);
-        //}
-        //Force the user to relogin if the token isn't valid anymore
-        //catch (Exception e) {
-        //    Console.WriteLine(e);
-            //File.Delete("Token.txt");
-            //await Main(null);
-        //}
+        await TaskHelper.getClient().Me.Todo
+            .Lists[listID]
+            .Tasks
+            .Request()
+            .AddAsync(newTask);
     }
 
     //Separate Methods for niceness
@@ -105,6 +97,7 @@ class CLIToDo {
             if (newDate.Month < 10) {
                 return newDate.Year.ToString() + "-0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
             }
+
             return newDate.Year.ToString() + "0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
         }
 
@@ -141,11 +134,12 @@ class CLIToDo {
         }
     }
 
+    //No idea what this does
     private IConfigurationRoot LoadAppSettings() {
         var appConfig = new ConfigurationBuilder()
             .AddUserSecrets<CLIToDo>()
             .Build();
-
+       
         // Check for required settings
         if (string.IsNullOrEmpty(appConfig["appId"]) ||
             string.IsNullOrEmpty(appConfig["scopes"])) {
