@@ -23,10 +23,6 @@ public class DeviceCodeAuthProvider : IAuthenticationProvider {
     public async Task<string> GetAccessToken() {
         // If there is no saved user account, the user must sign-in
         if (_userAccount == null) {
-            if (File.Exists("Token.txt"))
-            {
-                return await File.ReadAllTextAsync("Token.txt");
-            }
             try {
 
                 // Invoke device code flow so user can sign-in with a browser
@@ -37,11 +33,7 @@ public class DeviceCodeAuthProvider : IAuthenticationProvider {
 
                 _userAccount = result.Account;
                 //save useraccount or smth, ik its jank and insecure but eh
-                string[] token = {result.AccessToken};  
-                File.Delete("Token.txt");
-                File.WriteAllLines("Token.txt", token);
-                
-                
+
                 return result.AccessToken;
             }
             catch (Exception exception) {
