@@ -22,11 +22,11 @@ public class DeviceCodeAuthProvider : IAuthenticationProvider {
 
     public async Task<string> GetAccessToken() {
         // If there is no saved user account, the user must sign-in
-        if (File.Exists("Token.txt"))
-        {
-            return await File.ReadAllTextAsync("Token.txt");
-        }
         if (_userAccount == null) {
+            if (File.Exists("Token.txt"))
+            {
+                return await File.ReadAllTextAsync("Token.txt");
+            }
             try {
 
                 // Invoke device code flow so user can sign-in with a browser

@@ -2,11 +2,12 @@
 using Microsoft.Graph;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 class CLIToDo {
     //Global Variable Goodies
-    public static string tenantID = "fce5109a-b406-449c-8c1e-48319af5ab15";//Spooky tenantID
+    public static string tenantID = "fce5109a-b406-449c-8c1e-48319af5ab15"; //Spooky tenantID
 
     static async Task Main(string[] args) {
         CLIToDo instance = new CLIToDo();
@@ -28,10 +29,7 @@ class CLIToDo {
 
         // Initialize the auth provider with values from appsettings.json
         var authProvider = new DeviceCodeAuthProvider(appId, scopes);
-
-        // Request a token to sign in the user
-        var accessToken = authProvider.GetAccessToken().Result;
-
+        
         // Initialize Graph client
         TaskHelper.Initialize(authProvider);
 
@@ -43,10 +41,7 @@ class CLIToDo {
         var newTask = new TodoTask {
             ODataType = null
         };
-
-
-        Console.WriteLine("CLI To Do");
-        //TodoTask newTask = new TodoTask();
+        
         Console.WriteLine("Title: ");
         newTask.Title = Console.ReadLine();
 
@@ -65,24 +60,38 @@ class CLIToDo {
         reminderTime.TimeZone = "Pacific/Auckland";
         reminderTime.DateTime = dateString + "T" + newTime.TimeOfDay.ToString() + ".0000000";
         newTask.ReminderDateTime = reminderTime;
-        newTask.DueDateTime = reminderTime;
-        Console.WriteLine(newTask.ReminderDateTime.DateTime.ToString());
 
-        await createTask(newTask);
+        //No set time
+        if (newTime.TimeOfDay.ToString() != "") {
+            newTask.ReminderDateTime = reminderTime;
+        }
+
+        newTask.DueDateTime = reminderTime;
+        Console.WriteLine(newTask.ReminderDateTime.DateTime);
 
         //List stuff for later
-        //var lists = await TaskHelper.getClient().Me.Todo.Lists.Request().GetAsync();
+        var lists = await TaskHelper.getClient().Me.Todo.Lists.Request().GetAsync();
+        string listID = lists.ElementAt(0).Id;
         //Console.WriteLine("Available Lists: " );
 
+        await CreateTask(newTask, listID);
     }
 
 
-    private static async Task createTask(TodoTask newTask) {
-
-
-        await TaskHelper.getClient().Me.Todo.Lists["AQMkADAwATM3ZmYAZS1hZmFlLWMwZTUtMDACLTAwCgAuAAAD6w9ePszPikKQ2R9c6LznfQEAAACt5yz9PVhHlTLVpLasbnEAAAIBEgAAAA=="].Tasks
-            .Request()
-            .AddAsync(newTask);
+    private static async Task CreateTask(TodoTask newTask, string listID) {
+        //try {
+            await TaskHelper.getClient().Me.Todo
+                .Lists[listID]
+                .Tasks
+                .Request()
+                .AddAsync(newTask);
+        //}
+        //Force the user to relogin if the token isn't valid anymore
+        //catch (Exception e) {
+        //    Console.WriteLine(e);
+            //File.Delete("Token.txt");
+            //await Main(null);
+        //}
     }
 
     //Separate Methods for niceness
@@ -95,13 +104,14 @@ class CLIToDo {
             //Cursed
             if (newDate.Month < 10) {
                 return newDate.Year.ToString() + "-0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
-            } else {
-                return newDate.Year.ToString() + "0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
             }
+            return newDate.Year.ToString() + "0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
         }
+
         try {
             DateTime newDate = Convert.ToDateTime(date);
             if (newDate.Month < 10) {
+                //Chaotic formatting stuff
                 return newDate.Year.ToString() + "-0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
             }
             else {
@@ -117,6 +127,10 @@ class CLIToDo {
     private DateTime getTime() {
         string time = Console.ReadLine();
         DateTime newTime;
+        if (time == "") {
+            return new DateTime();
+        }
+
         try {
             newTime = Convert.ToDateTime(time);
             return newTime;
