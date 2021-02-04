@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 class CLIToDo {
     //Global Variable Goodies
     public static string tenantID = "fce5109a-b406-449c-8c1e-48319af5ab15"; //Spooky tenantID
+    public static string appID = "8c6a9efb-30e2-4c95-b975-9a46a82cfaf0"; //Spooky appID
+    public static string[] scopes = {"User.Read", "Tasks.Read", "Tasks.ReadWrite"};
+    
 
     static async Task Main(string[] args) {
         CLIToDo instance = new CLIToDo();
@@ -16,19 +19,10 @@ class CLIToDo {
 
     //Start the program
     private async Task start() {
-        var appConfig = LoadAppSettings();
 
-        if (appConfig == null) {
-            Console.WriteLine("Missing or invalid appsettings.json...exiting");
-            return;
-        }
-
-        var appId = appConfig["appId"];
-        var scopesString = appConfig["scopes"];
-        var scopes = scopesString.Split(';');
 
         // Initialize the auth provider with values from appsettings.json
-        var authProvider = new DeviceCodeAuthProvider(appId, scopes);
+        var authProvider = new DeviceCodeAuthProvider(appID, scopes);
 
         // Initialize Graph client
         TaskHelper.Initialize(authProvider);
@@ -132,20 +126,5 @@ class CLIToDo {
             Console.WriteLine("Try Again");
             return getTime();
         }
-    }
-
-    //No idea what this does
-    private IConfigurationRoot LoadAppSettings() {
-        var appConfig = new ConfigurationBuilder()
-            .AddUserSecrets<CLIToDo>()
-            .Build();
-       
-        // Check for required settings
-        if (string.IsNullOrEmpty(appConfig["appId"]) ||
-            string.IsNullOrEmpty(appConfig["scopes"])) {
-            return null;
-        }
-
-        return appConfig;
     }
 }

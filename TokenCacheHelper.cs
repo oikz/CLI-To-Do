@@ -27,7 +27,7 @@ static class TokenCacheHelper {
         // if the access operation resulted in a cache update
         if (args.HasStateChanged) {
             lock (FileLock) {
-                // reflect changesgs in the persistent store
+                // reflect changes in the persistent store
                 File.WriteAllBytes(CacheFilePath,
                     ProtectedData.Protect(args.TokenCache.SerializeMsalV3(),
                         null,
