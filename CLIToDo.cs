@@ -36,8 +36,7 @@ class CLIToDo {
             ODataType = null
         };
 
-        Console.Write("Title: ");
-        newTask.Title = Console.ReadLine();
+        newTask.Title = getTitle();
 
 
         DateTime newTime;
@@ -78,6 +77,7 @@ class CLIToDo {
             .Tasks
             .Request()
             .AddAsync(newTask);
+        Console.WriteLine("Task Created");
     }
 
     //Separate Methods for niceness
@@ -126,5 +126,14 @@ class CLIToDo {
             Console.WriteLine("Try Again");
             return getTime();
         }
+    }
+
+    //Separate method to account for empty titles easierly
+    private string getTitle() {
+        Console.Write("Title: ");
+        string title = Console.ReadLine();
+        if (title != "") return title;
+        Console.WriteLine("Invalid Title");
+        return getTitle();
     }
 }
