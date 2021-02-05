@@ -10,7 +10,7 @@ class CLIToDo {
     public static string tenantID = "fce5109a-b406-449c-8c1e-48319af5ab15"; //Spooky tenantID
     public static string appID = "8c6a9efb-30e2-4c95-b975-9a46a82cfaf0"; //Spooky appID
     public static string[] scopes = {"User.Read", "Tasks.Read", "Tasks.ReadWrite"};
-    
+
 
     static async Task Main(string[] args) {
         CLIToDo instance = new CLIToDo();
@@ -19,8 +19,6 @@ class CLIToDo {
 
     //Start the program
     private async Task start() {
-
-
         // Initialize the auth provider with values from appsettings.json
         var authProvider = new DeviceCodeAuthProvider(appID, scopes);
 
@@ -36,9 +34,13 @@ class CLIToDo {
             ODataType = null
         };
 
+        //Get title
         newTask.Title = getTitle();
 
+        //ID for the list to add the task to
+        string listID = getLists().Result;
 
+        //Setup the date and time for the task/reminder
         DateTime newTime;
 
         Console.WriteLine("Date: Format: YYYY-MM-DD (Empty for today)");
@@ -59,13 +61,7 @@ class CLIToDo {
             newTask.ReminderDateTime = reminderTime;
         }
 
-        newTask.DueDateTime = reminderTime;
-        //Console.WriteLine(newTask.ReminderDateTime.DateTime);
-        
-        //just get the first list (default Tasks list)
-        var lists = await TaskHelper.getClient().Me.Todo.Lists.Request().GetAsync();
-        string listID = lists.ElementAt(0).Id;
-        //Console.WriteLine("Available Lists: " );
+        newTask.DueDateTime = reminderTime; //Set the due date for the reminder
 
         await CreateTask(newTask, listID);
     }
@@ -77,7 +73,7 @@ class CLIToDo {
             .Tasks
             .Request()
             .AddAsync(newTask);
-        Console.WriteLine("Task Created");
+        Console.Write("Task Created");
     }
 
     //Separate Methods for niceness
@@ -135,5 +131,41 @@ class CLIToDo {
         if (title != "") return title;
         Console.WriteLine("Invalid Title");
         return getTitle();
+    }
+
+    //Method for allowing the user to choose a list from their available lists
+    private async Task<string> getLists() {
+        var lists = await TaskHelper.getClient().Me.Todo.Lists.Request().GetAsync();
+        Console.WriteLine("Available Lists: ");
+        for (int i = 0; i < lists.Count; i++) {
+            Console.WriteLine(i + 1 + " " + lists.ElementAt(i).DisplayName);
+        }
+
+        string listID = lists.ElementAt(getListsHelper(lists.Count) - 1).Id; //Get the chosen list
+        return listID;
+    }
+
+    //Helper method for user inputting an int
+    private int getListsHelper(int total) {
+        Console.Write("List: ");
+        string num = Console.ReadLine();
+        if (num == "") {
+            return 1; //Return default list if the user presses enter
+        }
+
+        int index;
+        try {
+            index = Convert.ToInt32(num);
+            if (index <= 0 || index > total) {//Out of range checks
+                Console.WriteLine("Invalid choice");
+                return getListsHelper(total);
+            }
+        }
+        catch (Exception) {//Try catch for not integers
+            Console.WriteLine("Not an integer");
+            return getListsHelper(total);
+        }
+
+        return index;
     }
 }
