@@ -28,6 +28,7 @@ public class DeviceCodeAuthProvider : IAuthenticationProvider {
             string previousLogin = "";
             previousLogin = await File.ReadAllTextAsync("prevUser.txt");
             previousLogin = previousLogin.Split("\r")[0];//Evil formatting
+            previousLogin = previousLogin.Split("\n")[0];//Evil formatting again....
             var result = await _msalClient
                 .AcquireTokenSilent(_scopes, previousLogin)
                 .ExecuteAsync();
