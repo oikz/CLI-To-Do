@@ -10,7 +10,7 @@ static class TokenCacheHelper {
     }
 
     public static readonly string CacheFilePath =
-        System.Reflection.Assembly.GetExecutingAssembly().Location + ".msalcache.bin3";
+       ".msalcache.bin3";
 
     private static readonly object FileLock = new object();
 
