@@ -24,6 +24,9 @@ class CLIToDo {
 
         // Initialize Graph client
         TaskHelper.Initialize(authProvider);
+        
+        //Create new folder for storing data if not already created
+        System.IO.Directory.CreateDirectory(System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile) + "\\todo\\");
 
         // Get signed in user
         var user = TaskHelper.GetMeAsync().Result;

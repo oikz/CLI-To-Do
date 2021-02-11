@@ -10,7 +10,7 @@ static class TokenCacheHelper {
     }
 
     public static readonly string CacheFilePath =
-       ".msalcache.bin3";
+        System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile) + "\\todo\\.msalcache.bin3";
 
     private static readonly object FileLock = new object();
 
