@@ -53,7 +53,7 @@ class CLIToDo {
         var reminderTime = new DateTimeTimeZone();
         reminderTime.ODataType = null; //Required for whatever reason
         //reminderTime.TimeZone = "Pacific/Auckland";
-        reminderTime.TimeZone = TimeZone.CurrentTimeZone.StandardName;
+        reminderTime.TimeZone = TimeZoneInfo.Local.StandardName;
         reminderTime.DateTime = dateString + "T" + newTime.TimeOfDay.ToString() + ".0000000";
         newTask.ReminderDateTime = reminderTime;
 

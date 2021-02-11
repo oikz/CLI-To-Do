@@ -34,7 +34,7 @@ public class DeviceCodeAuthProvider : IAuthenticationProvider {
                 .ExecuteAsync();
             return result.AccessToken;
         }
-        catch (Exception ignore) {
+        catch (Exception) {
             // If there is no saved user account, the user must sign-in
             if (_userAccount == null) {
                 try {
