@@ -52,7 +52,8 @@ class CLIToDo {
         //Set all the juicy task info
         var reminderTime = new DateTimeTimeZone();
         reminderTime.ODataType = null; //Required for whatever reason
-        reminderTime.TimeZone = "Pacific/Auckland";
+        //reminderTime.TimeZone = "Pacific/Auckland";
+        reminderTime.TimeZone = TimeZone.CurrentTimeZone.StandardName;
         reminderTime.DateTime = dateString + "T" + newTime.TimeOfDay.ToString() + ".0000000";
         newTask.ReminderDateTime = reminderTime;
 
@@ -97,11 +98,9 @@ class CLIToDo {
                 //Chaotic formatting stuff
                 return newDate.Year.ToString() + "-0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
             }
-            else {
-                return newDate.Year.ToString() + "0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
-            }
-        }
-        catch {
+
+            return newDate.Year.ToString() + "0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
+        } catch {
             Console.WriteLine("Try Again");
             return getDate();
         }
@@ -117,8 +116,7 @@ class CLIToDo {
         try {
             newTime = Convert.ToDateTime(time);
             return newTime;
-        }
-        catch {
+        } catch {
             Console.WriteLine("Try Again");
             return getTime();
         }
@@ -156,12 +154,13 @@ class CLIToDo {
         int index;
         try {
             index = Convert.ToInt32(num);
-            if (index <= 0 || index > total) {//Out of range checks
+            if (index <= 0 || index > total) {
+                //Out of range checks
                 Console.WriteLine("Invalid choice");
                 return getListsHelper(total);
             }
-        }
-        catch (Exception) {//Try catch for not integers
+        } catch (Exception) {
+            //Try catch for not integers
             Console.WriteLine("Not an integer");
             return getListsHelper(total);
         }
