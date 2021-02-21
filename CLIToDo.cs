@@ -24,9 +24,10 @@ class CLIToDo {
 
         // Initialize Graph client
         TaskHelper.Initialize(authProvider);
-        
+
         //Create new folder for storing data if not already created
-        System.IO.Directory.CreateDirectory(System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile) + "\\todo\\");
+        System.IO.Directory.CreateDirectory(
+            System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile) + "\\todo\\");
 
         // Get signed in user
         var user = TaskHelper.GetMeAsync().Result;
@@ -88,6 +89,19 @@ class CLIToDo {
             newDate = DateTime.Today;
 
             //Cursed
+            if (newDate.Month < 10) {
+                return newDate.Year.ToString() + "-0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
+            }
+
+            return newDate.Year.ToString() + "0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
+        }
+
+        //quick shortcut for tomorrow
+        if (date.ToLower() == "tomorrow") {
+            DateTime newDate = DateTime.Today;
+            newDate = newDate.AddDays(1);
+
+            //Cursed again
             if (newDate.Month < 10) {
                 return newDate.Year.ToString() + "-0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
             }
