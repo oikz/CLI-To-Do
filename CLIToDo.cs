@@ -1,24 +1,20 @@
 ﻿using System;
 using Microsoft.Graph;
-using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 class CLIToDo {
     //Global Variable Goodies
-    public static string tenantID = "fce5109a-b406-449c-8c1e-48319af5ab15"; //Spooky tenantID
-    public static string appID = "8c6a9efb-30e2-4c95-b975-9a46a82cfaf0"; //Spooky appID
-    public static string[] scopes = {"User.Read", "Tasks.Read", "Tasks.ReadWrite"};
+    private static string appID = "8c6a9efb-30e2-4c95-b975-9a46a82cfaf0"; //Spooky appID
+    private static readonly string[] scopes = {"User.Read", "Tasks.Read", "Tasks.ReadWrite"};
 
 
-    static async Task Main(string[] args) {
-        CLIToDo instance = new CLIToDo();
-        await instance.start();
+    public static async Task Main(string[] args) {
+        await start();
     }
 
     //Start the program
-    private async Task start() {
+    private static async Task start() {
         // Initialize the auth provider with values from appsettings.json
         var authProvider = new DeviceCodeAuthProvider(appID, scopes);
 
@@ -27,38 +23,35 @@ class CLIToDo {
 
         //Create new folder for storing data if not already created
         System.IO.Directory.CreateDirectory(
-            System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile) + "\\todo\\");
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\todo\\");
 
         // Get signed in user
         var user = TaskHelper.GetMeAsync().Result;
         Console.WriteLine($"Welcome {user.DisplayName}!");
 
         //make new task because it doesnt work unless i do this or smth
-        var newTask = new TodoTask {
-            ODataType = null
-        };
+        var newTask = new TodoTask {ODataType = null, Title = getTitle()};
 
         //Get title
-        newTask.Title = getTitle();
 
         //ID for the list to add the task to
-        string listID = getLists().Result;
+        var listID = getLists().Result;
 
         //Setup the date and time for the task/reminder
-        DateTime newTime;
 
         Console.WriteLine("Date: Format: YYYY-MM-DD (Empty for today)");
-        string dateString = getDate();
+        var dateString = getDate();
 
         Console.Write("Time: ");
-        newTime = getTime();
+        var newTime = getTime();
 
         //Set all the juicy task info
-        var reminderTime = new DateTimeTimeZone();
-        reminderTime.ODataType = null; //Required for whatever reason
-        //reminderTime.TimeZone = "Pacific/Auckland";
-        reminderTime.TimeZone = TimeZoneInfo.Local.StandardName;
-        reminderTime.DateTime = dateString + "T" + newTime.TimeOfDay.ToString() + ".0000000";
+        var reminderTime = new DateTimeTimeZone {
+            ODataType = null,//Required for whatever reason
+            TimeZone = TimeZoneInfo.Local.StandardName,
+            DateTime = dateString + "T" + newTime.TimeOfDay + ".0000000"
+        };
+
         newTask.ReminderDateTime = reminderTime;
 
         //No set time
@@ -82,56 +75,57 @@ class CLIToDo {
     }
 
     //Separate Methods for niceness
-    private string getDate() {
-        string date = Console.ReadLine();
+    private static string getDate() {
+        var date = Console.ReadLine();
+        
+        //Empty for today
         if (date == "") {
-            DateTime newDate;
-            newDate = DateTime.Today;
+            var newDate = DateTime.Today;
 
-            //Cursed
+            //Cursed formatting of months
             if (newDate.Month < 10) {
-                return newDate.Year.ToString() + "-0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
+                return newDate.Year + "-0" + newDate.Month + "-" + newDate.Day;
             }
 
-            return newDate.Year.ToString() + "0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
+            return newDate.Year + "0" + newDate.Month + "-" + newDate.Day;
         }
 
-        //quick shortcut for tomorrow
+        //Quick shortcut for tomorrow
         if (date.ToLower() == "tomorrow") {
-            DateTime newDate = DateTime.Today;
+            var newDate = DateTime.Today;
             newDate = newDate.AddDays(1);
 
             //Cursed again
             if (newDate.Month < 10) {
-                return newDate.Year.ToString() + "-0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
+                return newDate.Year + "-0" + newDate.Month + "-" + newDate.Day;
             }
 
-            return newDate.Year.ToString() + "0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
+            return newDate.Year + "0" + newDate.Month + "-" + newDate.Day;
         }
 
+        //Attempt to create a DateTime based on the user's inputs
         try {
-            DateTime newDate = Convert.ToDateTime(date);
+            var newDate = Convert.ToDateTime(date);
             if (newDate.Month < 10) {
                 //Chaotic formatting stuff
-                return newDate.Year.ToString() + "-0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
+                return newDate.Year + "-0" + newDate.Month + "-" + newDate.Day;
             }
 
-            return newDate.Year.ToString() + "0" + newDate.Month.ToString() + "-" + newDate.Day.ToString();
+            return newDate.Year + "0" + newDate.Month + "-" + newDate.Day;
         } catch {
             Console.WriteLine("Try Again");
             return getDate();
         }
     }
 
-    private DateTime getTime() {
-        string time = Console.ReadLine();
-        DateTime newTime;
+    private static DateTime getTime() {
+        var time = Console.ReadLine();
         if (time == "") {
             return new DateTime();
         }
 
         try {
-            newTime = Convert.ToDateTime(time);
+            var newTime = Convert.ToDateTime(time);
             return newTime;
         } catch {
             Console.WriteLine("Try Again");
@@ -139,31 +133,33 @@ class CLIToDo {
         }
     }
 
-    //Separate method to account for empty titles easierly
-    private string getTitle() {
-        Console.Write("Title: ");
-        string title = Console.ReadLine();
-        if (title != "") return title;
-        Console.WriteLine("Invalid Title");
-        return getTitle();
+    //Separate method to account for empty titles more easily
+    //Loop until valid title entered
+    private static string getTitle() {
+        while (true) {
+            Console.Write("Title: ");
+            var title = Console.ReadLine();
+            if (title != "") return title;
+            Console.WriteLine("Invalid Title");
+        }
     }
 
     //Method for allowing the user to choose a list from their available lists
-    private async Task<string> getLists() {
+    private static async Task<string> getLists() {
         var lists = await TaskHelper.getClient().Me.Todo.Lists.Request().GetAsync();
         Console.WriteLine("Available Lists: ");
-        for (int i = 0; i < lists.Count; i++) {
+        for (var i = 0; i < lists.Count; i++) {
             Console.WriteLine(i + 1 + " " + lists.ElementAt(i).DisplayName);
         }
 
-        string listID = lists.ElementAt(getListsHelper(lists.Count) - 1).Id; //Get the chosen list
+        var listID = lists.ElementAt(getListsHelper(lists.Count) - 1).Id; //Get the chosen list
         return listID;
     }
 
     //Helper method for user inputting an int
-    private int getListsHelper(int total) {
+    private static int getListsHelper(int total) {
         Console.Write("List: ");
-        string num = Console.ReadLine();
+        var num = Console.ReadLine();
         if (num == "") {
             return 1; //Return default list if the user presses enter
         }
