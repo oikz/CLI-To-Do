@@ -100,7 +100,7 @@ class CLIToDo {
                 return newDate.Year + "-0" + newDate.Month + "-" + newDate.Day;
             }
 
-            return newDate.Year + "0" + newDate.Month + "-" + newDate.Day;
+            return newDate.Year + "-" + newDate.Month + "-" + newDate.Day;
         }
 
         //Attempt to create a DateTime based on the user's inputs
