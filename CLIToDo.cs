@@ -87,7 +87,7 @@ class CLIToDo {
                 return newDate.Year + "-0" + newDate.Month + "-" + newDate.Day;
             }
 
-            return newDate.Year + "0" + newDate.Month + "-" + newDate.Day;
+            return newDate.Year + "-" + newDate.Month + "-" + newDate.Day;
         }
 
         //Quick shortcut for tomorrow
