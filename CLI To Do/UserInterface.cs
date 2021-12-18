@@ -56,4 +56,29 @@ public static class UserInterface {
             Console.WriteLine("Invalid Title");
         }
     }
+    
+    //Helper method for user inputting an int
+    public static int GetListsHelper(int total) {
+        Console.Write("List: ");
+        var num = Console.ReadLine();
+        if (string.IsNullOrEmpty(num)) {
+            return 1; //Return default list if the user presses enter
+        }
+
+        int index;
+        try {
+            index = Convert.ToInt32(num);
+            if (index <= 0 || index > total) {
+                //Out of range checks
+                Console.WriteLine("Invalid choice");
+                return GetListsHelper(total);
+            }
+        } catch (Exception) {
+            //Try catch for not integers
+            Console.WriteLine("Not an integer");
+            return GetListsHelper(total);
+        }
+
+        return index;
+    }
 }
