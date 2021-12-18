@@ -11,38 +11,20 @@ public static class UserInterface {
 
         //Empty for today
         if (date == "") {
-            var newDate = DateTime.Today;
-
-            //Cursed formatting of months
-            if (newDate.Month < 10) {
-                return newDate.Year + "-0" + newDate.Month + "-" + newDate.Day;
-            }
-
-            return newDate.Year + "-" + newDate.Month + "-" + newDate.Day;
+            return DateTime.Today.ToString("yyyy-MM-dd");
         }
 
         //Quick shortcut for tomorrow
         if (date.ToLower() == "tomorrow") {
             var newDate = DateTime.Today;
             newDate = newDate.AddDays(1);
-
-            //Cursed again
-            if (newDate.Month < 10) {
-                return newDate.Year + "-0" + newDate.Month + "-" + newDate.Day;
-            }
-
-            return newDate.Year + "-" + newDate.Month + "-" + newDate.Day;
+            return newDate.ToString("yyyy-MM-dd");
         }
 
         //Attempt to create a DateTime based on the user's inputs
         try {
             var newDate = Convert.ToDateTime(date);
-            if (newDate.Month < 10) {
-                //Chaotic formatting stuff
-                return newDate.Year + "-0" + newDate.Month + "-" + newDate.Day;
-            }
-
-            return newDate.Year + "-" + newDate.Month + "-" + newDate.Day;
+            return newDate.ToString("yyyy-MM-dd");
         } catch {
             Console.WriteLine("Try Again");
             return getDate();
