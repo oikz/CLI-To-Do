@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace CLI_To_Do;
 
-class CLIToDo {
+public static class CLIToDo {
     //Global Variable Goodies
     private static string appID = "8c6a9efb-30e2-4c95-b975-9a46a82cfaf0"; //Spooky appID
-    private static readonly string[] scopes = {"User.Read", "Tasks.Read", "Tasks.ReadWrite"};
+    private static readonly string[] scopes = { "User.Read", "Tasks.Read", "Tasks.ReadWrite" };
 
 
     public static async Task Main(string[] args) {
@@ -32,7 +32,7 @@ class CLIToDo {
         Console.WriteLine($"Welcome {user.DisplayName}!");
 
         //make new task because it doesnt work unless i do this or smth
-        var newTask = new TodoTask {ODataType = null, Title = getTitle()};
+        var newTask = new TodoTask { ODataType = null, Title = UserInterface.getTitle() };
 
         //Get title
 
@@ -42,14 +42,14 @@ class CLIToDo {
         //Setup the date and time for the task/reminder
 
         Console.WriteLine("Date: Format: YYYY-MM-DD (Empty for today)");
-        var dateString = getDate();
+        var dateString = UserInterface.getDate();
 
         Console.Write("Time: ");
-        var newTime = getTime();
+        var newTime = UserInterface.getTime();
 
         //Set all the juicy task info
         var reminderTime = new DateTimeTimeZone {
-            ODataType = null,//Required for whatever reason
+            ODataType = null, //Required for whatever reason
             TimeZone = TimeZoneInfo.Local.StandardName,
             DateTime = dateString + "T" + newTime.TimeOfDay + ".0000000"
         };
@@ -74,76 +74,6 @@ class CLIToDo {
             .Request()
             .AddAsync(newTask);
         Console.Write("Task Created");
-    }
-
-    //Separate Methods for niceness
-    private static string getDate() {
-        var date = Console.ReadLine();
-        
-        //Empty for today
-        if (date == "") {
-            var newDate = DateTime.Today;
-
-            //Cursed formatting of months
-            if (newDate.Month < 10) {
-                return newDate.Year + "-0" + newDate.Month + "-" + newDate.Day;
-            }
-
-            return newDate.Year + "-" + newDate.Month + "-" + newDate.Day;
-        }
-
-        //Quick shortcut for tomorrow
-        if (date.ToLower() == "tomorrow") {
-            var newDate = DateTime.Today;
-            newDate = newDate.AddDays(1);
-
-            //Cursed again
-            if (newDate.Month < 10) {
-                return newDate.Year + "-0" + newDate.Month + "-" + newDate.Day;
-            }
-
-            return newDate.Year + "-" + newDate.Month + "-" + newDate.Day;
-        }
-
-        //Attempt to create a DateTime based on the user's inputs
-        try {
-            var newDate = Convert.ToDateTime(date);
-            if (newDate.Month < 10) {
-                //Chaotic formatting stuff
-                return newDate.Year + "-0" + newDate.Month + "-" + newDate.Day;
-            }
-
-            return newDate.Year + "-" + newDate.Month + "-" + newDate.Day;
-        } catch {
-            Console.WriteLine("Try Again");
-            return getDate();
-        }
-    }
-
-    private static DateTime getTime() {
-        var time = Console.ReadLine();
-        if (time == "") {
-            return new DateTime();
-        }
-
-        try {
-            var newTime = Convert.ToDateTime(time);
-            return newTime;
-        } catch {
-            Console.WriteLine("Try Again");
-            return getTime();
-        }
-    }
-
-    //Separate method to account for empty titles more easily
-    //Loop until valid title entered
-    private static string getTitle() {
-        while (true) {
-            Console.Write("Title: ");
-            var title = Console.ReadLine();
-            if (title != "") return title;
-            Console.WriteLine("Invalid Title");
-        }
     }
 
     //Method for allowing the user to choose a list from their available lists
