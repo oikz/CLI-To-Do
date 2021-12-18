@@ -1,6 +1,8 @@
 ﻿using Microsoft.Identity.Client;
 using System.IO;
 
+namespace CLI_To_Do;
+
 //No idea whats really going on here I just got it from the microsoft docs
 static class TokenCacheHelper {
     public static void EnableSerialization(ITokenCache tokenCache) {

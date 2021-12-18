@@ -3,6 +3,8 @@ using Microsoft.Graph;
 using System.Linq;
 using System.Threading.Tasks;
 
+namespace CLI_To_Do;
+
 class CLIToDo {
     //Global Variable Goodies
     private static string appID = "8c6a9efb-30e2-4c95-b975-9a46a82cfaf0"; //Spooky appID

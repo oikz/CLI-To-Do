@@ -6,6 +6,8 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using File = System.IO.File;
 
+namespace CLI_To_Do;
+
 public class DeviceCodeAuthProvider : IAuthenticationProvider {
     private IPublicClientApplication _msalClient;
     private string[] _scopes;

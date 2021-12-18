@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
+namespace CLI_To_Do;
 
 //Entirely Snatched from MS tutorial
 public class TaskHelper {
