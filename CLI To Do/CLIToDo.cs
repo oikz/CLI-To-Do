@@ -42,7 +42,7 @@ public static class CLIToDo {
         Console.WriteLine("Date: Format: YYYY-MM-DD (Empty for today)");
         var dateString = UserInterface.getDate();
 
-        Console.Write("Time: ");
+        Console.Write("Time: (Empty for no reminder)");
         var newTime = UserInterface.getTime();
 
         //Set all the juicy task info
@@ -51,11 +51,9 @@ public static class CLIToDo {
             TimeZone = TimeZoneInfo.Local.StandardName,
             DateTime = dateString + "T" + newTime.TimeOfDay + ".0000000"
         };
-
-        newTask.ReminderDateTime = reminderTime;
-
-        //No set time
-        if (newTime.TimeOfDay.ToString() != "") {
+        
+        //Only create reminder if date is not empty
+        if (newTime.TimeOfDay != new DateTime().TimeOfDay) {
             newTask.ReminderDateTime = reminderTime;
         }
 

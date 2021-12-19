@@ -34,7 +34,7 @@ public static class UserInterface {
     public static DateTime getTime() {
         var time = Console.ReadLine();
         if (time == "") {
-            return new DateTime();
+            return new DateTime(); //Empty for no reminder
         }
 
         try {
