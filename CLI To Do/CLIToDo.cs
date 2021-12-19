@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Graph;
 using System.Threading.Tasks;
 
@@ -31,18 +32,17 @@ public static class CLIToDo {
 
         //make new task because it doesnt work unless i do this or smth
         var newTask = new TodoTask { ODataType = null, Title = UserInterface.getTitle() };
-
-        //Get title
-
+        
         //ID for the list to add the task to
-        var listID = TaskHelper.getLists().Result;
+        var lists = await TaskHelper.getLists();
+        var listID = lists.ElementAt(UserInterface.GetListsHelper(lists.Count) - 1).Id; //Get the chosen list
 
         //Setup the date and time for the task/reminder
 
-        Console.WriteLine("Date: Format: YYYY-MM-DD (Empty for today)");
+        Console.WriteLine("Date: Format: YYYY-MM-DD (Empty for today) ");
         var dateString = UserInterface.getDate();
 
-        Console.Write("Time: (Empty for no reminder)");
+        Console.Write("Time: (Empty for no reminder) ");
         var newTime = UserInterface.getTime();
 
         SetDates(dateString, newTime, newTask);
