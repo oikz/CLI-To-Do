@@ -45,20 +45,30 @@ public static class CLIToDo {
         Console.Write("Time: (Empty for no reminder)");
         var newTime = UserInterface.getTime();
 
+        SetDates(dateString, newTime, newTask);
+
+        await TaskHelper.CreateTask(newTask, listID);
+    }
+
+    /// <summary>
+    /// Set the task due date and reminder date for the TodoTask
+    /// </summary>
+    /// <param name="dateString">The date it is due, represented in a string</param>
+    /// <param name="newTime">The time to be reminded</param>
+    /// <param name="newTask">The TodoTask to be updated</param>
+    private static void SetDates(string dateString, DateTime newTime, TodoTask newTask) {
         //Set all the juicy task info
         var reminderTime = new DateTimeTimeZone {
             ODataType = null, //Required for whatever reason
             TimeZone = TimeZoneInfo.Local.StandardName,
             DateTime = dateString + "T" + newTime.TimeOfDay + ".0000000"
         };
-        
+
         //Only create reminder if date is not empty
         if (newTime.TimeOfDay != new DateTime().TimeOfDay) {
             newTask.ReminderDateTime = reminderTime;
         }
 
         newTask.DueDateTime = reminderTime; //Set the due date for the reminder
-
-        await TaskHelper.CreateTask(newTask, listID);
     }
 }
