@@ -51,7 +51,7 @@ public class TaskHelperTests {
 
     [Test]
     public async Task GetListsTest() {
-        var result = await TaskHelper.getLists();
+        var result = await TaskHelper.GetLists();
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("TestListId", result.CurrentPage.First().Id);
     }

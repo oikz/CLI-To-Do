@@ -6,7 +6,28 @@ namespace CLI_To_Do;
 /// User interface methods for getting the user's input.
 /// </summary>
 public static class UserInterface {
-    public static string getDate() {
+    public static string GetDate() {
+        //Display Calendar
+        var today = DateTime.Today;
+        var startOfWeek = DateTime.Parse($"{today.Year}-{today.Month}-{01}");
+        
+        if (!startOfWeek.Date.DayOfWeek.Equals(DayOfWeek.Monday)) {
+            startOfWeek = startOfWeek.AddDays(-(int)startOfWeek.Date.DayOfWeek + 1);
+        }
+
+        Console.WriteLine(today.ToString("MMMM"));
+        Console.WriteLine("M  T  W  T  F  S  S");
+        Console.WriteLine("___________________");
+        for (var j = 0; j < 5; j++) {
+            for (var i = 0; i < 7; i++) {
+                Console.ForegroundColor = startOfWeek.Date.Equals(today.Date) ? ConsoleColor.Red : ConsoleColor.White;
+                Console.Write($"{startOfWeek.Day} ");
+                if (startOfWeek.Day < 10) Console.Write(" ");
+                startOfWeek = startOfWeek.AddDays(1);
+            }
+            Console.Write("\n");
+        }
+
         var date = Console.ReadLine();
 
         //Empty for today
@@ -27,11 +48,11 @@ public static class UserInterface {
             return newDate.ToString("yyyy-MM-dd");
         } catch {
             Console.WriteLine("Try Again");
-            return getDate();
+            return GetDate();
         }
     }
 
-    public static DateTime getTime() {
+    public static DateTime GetTime() {
         var time = Console.ReadLine();
         if (time == "") {
             return new DateTime(); //Empty for no reminder
@@ -42,13 +63,13 @@ public static class UserInterface {
             return newTime;
         } catch {
             Console.WriteLine("Try Again");
-            return getTime();
+            return GetTime();
         }
     }
 
     //Separate method to account for empty titles more easily
     //Loop until valid title entered
-    public static string getTitle() {
+    public static string GetTitle() {
         while (true) {
             Console.Write("Title: ");
             var title = Console.ReadLine();

@@ -31,19 +31,19 @@ public static class CLIToDo {
         Console.WriteLine($"Welcome {user.DisplayName}!");
 
         //make new task because it doesnt work unless i do this or smth
-        var newTask = new TodoTask { ODataType = null, Title = UserInterface.getTitle() };
+        var newTask = new TodoTask { ODataType = null, Title = UserInterface.GetTitle() };
         
         //ID for the list to add the task to
-        var lists = await TaskHelper.getLists();
+        var lists = await TaskHelper.GetLists();
         var listID = lists.ElementAt(UserInterface.GetListsHelper(lists.Count) - 1).Id; //Get the chosen list
 
         //Setup the date and time for the task/reminder
 
-        Console.WriteLine("Date: Format: YYYY-MM-DD (Empty for today) ");
-        var dateString = UserInterface.getDate();
+        Console.WriteLine("\nDate: Format: YYYY-MM-DD (Empty for today) ");
+        var dateString = UserInterface.GetDate();
 
-        Console.Write("Time: (Empty for no reminder) ");
-        var newTime = UserInterface.getTime();
+        Console.Write("\nTime: (Empty for no reminder) ");
+        var newTime = UserInterface.GetTime();
 
         SetDates(dateString, newTime, newTask);
 
