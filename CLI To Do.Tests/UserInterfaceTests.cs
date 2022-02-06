@@ -14,25 +14,25 @@ public class UserInterfaceTests {
     [TestCase("invalid\n2021-12-31", "2021-12-31")]
     public void GetDate_Valid(string date, string result) {
         Console.SetIn(new StringReader(date));
-        Assert.AreEqual(result, UserInterface.getDate());
+        Assert.AreEqual(result, UserInterface.GetDate());
     }
 
     [Test]
     public void GetDate_Today() {
         Console.SetIn(new StringReader("\n"));
-        Assert.AreEqual(DateTime.Today.ToString("yyyy-MM-dd"), UserInterface.getDate());
+        Assert.AreEqual(DateTime.Today.ToString("yyyy-MM-dd"), UserInterface.GetDate());
     }
     
     [Test]
     public void GetDate_Tomorrow() {
         Console.SetIn(new StringReader("tomorrow"));
-        Assert.AreEqual(DateTime.Today.AddDays(1).ToString("yyyy-MM-dd"), UserInterface.getDate());
+        Assert.AreEqual(DateTime.Today.AddDays(1).ToString("yyyy-MM-dd"), UserInterface.GetDate());
     }
 
     [Test]
     public void GetDate_Invalid() {
         Console.SetIn(new StringReader("Invalid"));
-        Assert.Throws<NullReferenceException>(() => UserInterface.getDate());
+        Assert.Throws<NullReferenceException>(() => UserInterface.GetDate());
     }
     
     [TestCase("3am", "3:00 AM")]
@@ -41,13 +41,13 @@ public class UserInterfaceTests {
     [TestCase("12pm", "12:00 PM")]
     public void GetTime_Valid(string input, string result) {
         Console.SetIn(new StringReader(input));
-        Assert.AreEqual(result, UserInterface.getTime().ToString("t", CultureInfo.CreateSpecificCulture("en-us")));
+        Assert.AreEqual(result, UserInterface.GetTime().ToString("t", CultureInfo.CreateSpecificCulture("en-us")));
     }
 
     [Test]
     public void GetTime_None() {
         Console.SetIn(new StringReader("\n"));
-        Assert.AreEqual(new DateTime(), UserInterface.getTime());
+        Assert.AreEqual(new DateTime(), UserInterface.GetTime());
     }
 
     [TestCase("18", "12:00 AM")] 
@@ -58,7 +58,7 @@ public class UserInterfaceTests {
     [TestCase("26", "12:00 AM")] 
     public void GetTime_Invalid(string input, string result) {
         Console.SetIn(new StringReader(input));
-        Assert.AreEqual(result, UserInterface.getTime().ToString("t", CultureInfo.CreateSpecificCulture("en-us")));
+        Assert.AreEqual(result, UserInterface.GetTime().ToString("t", CultureInfo.CreateSpecificCulture("en-us")));
     }
     
     [TestCase("Title", "Title")]
@@ -67,7 +67,7 @@ public class UserInterfaceTests {
     [TestCase("\n\n\n\ntitle4", "title4")]
     public void GetTitle_Valid(string title, string result) {
         Console.SetIn(new StringReader(title));
-        Assert.AreEqual(result, UserInterface.getTitle());
+        Assert.AreEqual(result, UserInterface.GetTitle());
     }
     
     [TestCase(10, "100\n5", 5)]

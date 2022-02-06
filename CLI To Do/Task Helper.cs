@@ -47,9 +47,9 @@ public static class TaskHelper {
     /// Gets the task lists of the current user from Graph API
     /// </summary>
     /// <returns>A page of lists</returns>
-    public static async Task<ITodoListsCollectionPage> getLists() {
+    public static async Task<ITodoListsCollectionPage> GetLists() {
         var lists = await GraphClient.Me.Todo.Lists.Request().GetAsync();
-        Console.WriteLine("Available Lists: ");
+        Console.WriteLine("\nAvailable Lists: ");
         for (var i = 0; i < lists.Count; i++) {
             Console.WriteLine(i + 1 + " " + lists.ElementAt(i).DisplayName);
         }
