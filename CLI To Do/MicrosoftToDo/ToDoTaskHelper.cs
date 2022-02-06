@@ -1,11 +1,11 @@
-﻿using Microsoft.Graph;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Graph;
 
-namespace CLI_To_Do;
+namespace CLI_To_Do.MicrosoftToDo;
 
-public static class TaskHelper {
+public static class ToDoTaskHelper {
     public static GraphServiceClient GraphClient;
 
     public static void Initialize(IAuthenticationProvider authProvider) {

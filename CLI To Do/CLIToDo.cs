@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using CLI_To_Do.MicrosoftToDo;
 using Microsoft.Graph;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Tasks.v1;
-using Google.Apis.Tasks.v1.Data;
 using Google.Apis.Util.Store;
-using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
 using Task = System.Threading.Tasks.Task;
 
 namespace CLI_To_Do;
@@ -88,21 +86,21 @@ public static class CLIToDo {
         var authProvider = new DeviceCodeAuthProvider(ToDoAppId, ToDoScopes);
 
         // Initialize Graph client
-        TaskHelper.Initialize(authProvider);
+        ToDoTaskHelper.Initialize(authProvider);
 
         //Create new folder for storing data if not already created
         System.IO.Directory.CreateDirectory(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\todo\\");
 
         // Get signed in user
-        var user = TaskHelper.GetMeAsync().Result;
+        var user = ToDoTaskHelper.GetMeAsync().Result;
         Console.WriteLine($"Welcome {user.DisplayName}!");
 
         //make new task because it doesnt work unless i do this or smth
         var newTask = new TodoTask { ODataType = null, Title = UserInterface.GetTitle() };
 
         //ID for the list to add the task to
-        var lists = await TaskHelper.GetLists();
+        var lists = await ToDoTaskHelper.GetLists();
         var listID = lists.ElementAt(UserInterface.GetListsHelper(lists.Count) - 1).Id; //Get the chosen list
 
         //Setup the date and time for the task/reminder
@@ -113,8 +111,8 @@ public static class CLIToDo {
         Console.Write("\nTime: (Empty for no reminder) ");
         var newTime = UserInterface.GetTime();
 
-        TaskHelper.SetDates(dateString, newTime, newTask);
+        ToDoTaskHelper.SetDates(dateString, newTime, newTask);
 
-        await TaskHelper.CreateTask(newTask, listID);
+        await ToDoTaskHelper.CreateTask(newTask, listID);
     }
 }
