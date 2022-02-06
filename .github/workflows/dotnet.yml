@@ -1,4 +1,4 @@
-name: Build & Test
+name: Build, Test and Release
 
 on:
   push:
@@ -7,13 +7,21 @@ on:
     branches: [ master ]
 
 jobs:
-  build-and-test:
+  build-test-release:
 
-    name: build-and-test-${{matrix.os}}
+    name: build-test-release-${{matrix.os}}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest, macOS-latest ]
+        include:
+          - os: ubuntu-latest
+            PLATFORM: linux-x64
+            
+          - os: macos-latest
+            PLATFORM: osx-x64
+            
+          - os: windows-latest
+            PLATFORM: win-x64
 
     steps:
       - uses: actions/checkout@v2
@@ -29,4 +37,12 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test --verbosity normal
+        run: dotnet test
+
+      - name: Publish
+        run: dotnet publish 'CLI To Do' -r ${{ matrix.PLATFORM }} -c Release --self-contained /p:PublishSingleFile=true /p:PublishTrimmed=true /p:IncludeNativeLibrariesForSelfExtract=true /p:DebugType=None /p:DebugSymbols=false
+        
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.PLATFORM }}
+          path: 'CLI To Do/bin/Release/net6.0/${{ matrix.PLATFORM }}/publish'
