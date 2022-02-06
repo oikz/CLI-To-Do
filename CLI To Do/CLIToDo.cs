@@ -12,7 +12,27 @@ public static class CLIToDo {
 
 
     public static async Task Main(string[] args) {
-        await MicrosoftToDo();
+        await ChoosePlatform();
+    }
+
+    private static async Task ChoosePlatform() {
+        Console.WriteLine("Welcome to CLI To Do");
+        Console.WriteLine("Please choose a platform to use: ");
+        Console.WriteLine("1. Microsoft To Do");
+        Console.WriteLine("2. Google Tasks");
+        Console.WriteLine("3. Exit");
+        var input = UserInterface.ChoosePlatform();
+        switch (input) {
+            case 1:
+                await MicrosoftToDo();
+                break;
+            case 2:
+                //await GoogleTasks();
+                break;
+            case 3:
+                Environment.Exit(0);
+                break;
+        }
     }
 
     private static async Task MicrosoftToDo() {

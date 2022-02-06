@@ -6,6 +6,15 @@ namespace CLI_To_Do;
 /// User interface methods for getting the user's input.
 /// </summary>
 public static class UserInterface {
+    public static int ChoosePlatform() {
+        var choices = new[] {1, 2, 3};
+        while (true) {
+            var userInput = Console.ReadLine();
+            if (int.TryParse(userInput, out var platform) && Array.Exists(choices, e => e == platform)) return platform;
+            Console.WriteLine("Please enter a valid number.");
+        }
+    }
+
     public static string GetDate() {
         //Display Calendar
         var today = DateTime.Today;
