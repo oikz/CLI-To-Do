@@ -1,13 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
-using System.Threading;
+using CLI_To_Do.GoogleTasks;
 using CLI_To_Do.MicrosoftToDo;
 using Microsoft.Graph;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Services;
 using Google.Apis.Tasks.v1;
-using Google.Apis.Util.Store;
 using Task = System.Threading.Tasks.Task;
 
 namespace CLI_To_Do;
@@ -20,6 +16,7 @@ public static class CLIToDo {
     private static readonly string[] GoogleScopes = { TasksService.Scope.Tasks };
     
     public static async Task Main(string[] args) {
+        System.IO.Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\todo\\");
         await ChoosePlatform();
     }
 
@@ -44,40 +41,14 @@ public static class CLIToDo {
     }
 
     private static async Task GoogleTasks() {
-        UserCredential credential;
-        await using (var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(GoogleJson))) {
-            // The file token.json stores the user's access and refresh tokens, and is created
-            // automatically when the authorization flow completes for the first time.
-            var credPath = "token.json";
-            credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                GoogleClientSecrets.FromStreamAsync(stream).Result.Secrets,
-                GoogleScopes,
-                "user",
-                CancellationToken.None,
-                new FileDataStore(credPath, true)).Result;
-            Console.WriteLine("Credential file saved to: " + credPath);
-        }
-
-        // Create Google Tasks API service.
-        var service = new TasksService(new BaseClientService.Initializer {
-            HttpClientInitializer = credential,
-            ApplicationName = "CLI To Do"
-        });
-
-        // Define parameters of request.
-        var listRequest = service.Tasklists.List();
-        listRequest.MaxResults = 10;
-
-        // List task lists.
-        var taskLists = listRequest.Execute().Items;
-        Console.WriteLine("Task Lists:");
-        if (taskLists != null && taskLists.Count > 0) {
-            foreach (var taskList in taskLists) {
-                Console.WriteLine("{0} ({1})", taskList.Title, taskList.Id);
-            }
-        } else {
-            Console.WriteLine("No task lists found.");
-        }
+        var service = await GoogleTaskHelper.CreateService(GoogleJson, GoogleScopes);
+        
+        //TODO  Get signed in user 
+        //var user = ToDoTaskHelper.GetMeAsync().Result;
+        //Console.WriteLine($"Welcome {user.DisplayName}!");
+        
+        var lists = GoogleTaskHelper.GetLists(service);
+        var listID = lists.ElementAt(UserInterface.GetListsHelper(lists.Count) - 1).Id; //Get the chosen list
 
         Console.Read();
     }
@@ -87,10 +58,6 @@ public static class CLIToDo {
 
         // Initialize Graph client
         ToDoTaskHelper.Initialize(authProvider);
-
-        //Create new folder for storing data if not already created
-        System.IO.Directory.CreateDirectory(
-            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\todo\\");
 
         // Get signed in user
         var user = ToDoTaskHelper.GetMeAsync().Result;
