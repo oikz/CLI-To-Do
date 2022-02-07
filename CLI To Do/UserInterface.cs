@@ -29,7 +29,7 @@ public static class UserInterface {
         Console.WriteLine("___________________");
         for (var j = 0; j < 5; j++) {
             for (var i = 0; i < 7; i++) {
-                Console.ForegroundColor = startOfWeek.Date.Equals(today.Date) ? ConsoleColor.Red : ConsoleColor.White;
+                Console.ForegroundColor = startOfWeek.Date.Equals(today.Date) ? ConsoleColor.Red : ConsoleColor.Gray;
                 Console.Write($"{startOfWeek.Day} ");
                 if (startOfWeek.Day < 10) Console.Write(" ");
                 startOfWeek = startOfWeek.AddDays(1);
