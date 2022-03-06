@@ -1,13 +1,18 @@
 # CLI-To-Do
 [![Build, Test and Release](https://github.com/oikz/CLI-To-Do/actions/workflows/dotnet.yml/badge.svg)](https://github.com/oikz/CLI-To-Do/actions/workflows/dotnet.yml)  
-Proof of concept command line based implementation of Microsoft To Do using the Microsoft Graph API
 
-Made this because I hated how long it takes to open the app and then create a reminder  
-Also wanted to learn C# a bit 
+## What is it?
+CLI-To-Do is a command line tool to help you create new Tasks and Reminders using a simple and quick Command line interface.  
 
-Currently can only login and add tasks (The only features I planned on using)
+#### Currently supported reminder platforms:
+- [Microsoft To Do](https://todo.microsoft.com/)
 
-## Build  
-Built using:  
-`dotnet publish -r [OS] -c Release /p:PublishSingleFile=true /p:PublishTrimmed=true /p:IncludeNativeLibrariesForSelfExtract=true`  
-replacing "[OS]" with win-x64, osx-x64 or linux-x64 (untested)
+#### Planned reminder platforms:
+- Google Tasks
+
+## Usage
+- Clone this repository
+- Run with `dotnet run --project "CLI To Do"` 
+- Or publish to an executable using `dotnet publish -r [OS] -c Release /p:PublishSingleFile=true /p:PublishTrimmed=true /p:IncludeNativeLibrariesForSelfExtract=true` replacing "[OS]" with a suitable value from [here](https://docs.microsoft.com/en-us/dotnet/core/rid-catalog)   
+e.g., `win-x64`, `osx-x64` or `linux-x64`
+- Run the executable
