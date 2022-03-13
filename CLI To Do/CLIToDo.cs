@@ -19,10 +19,38 @@ public static class CLIToDo {
     
     public static async Task Main(string[] args) {
         System.IO.Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\todo\\");
-        await ChoosePlatform();
+        await Platform();
     }
 
-    private static async Task ChoosePlatform() {
+    /// <summary>
+    /// This method will determine which platform the user is using and will call the appropriate method based on the
+    /// configuration text file
+    /// </summary>
+    private static async Task Platform() {
+        var platformConfig = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\todo\\platformConfig.txt";
+        if (System.IO.File.Exists(platformConfig)) {
+            var platform = await System.IO.File.ReadAllTextAsync(platformConfig);
+            switch (platform) {
+                case "microsoft":
+                    await MicrosoftToDo();
+                    break;
+                case "google":
+                    await GoogleTasks();
+                    break;
+                default:
+                    await ChoosePlatform(platformConfig);
+                    break;
+            }
+        } else {
+            await ChoosePlatform(platformConfig);
+        }
+    }
+
+    /// <summary>
+    /// Allow the user to select a platform to be used and save it to the configuration file
+    /// </summary>
+    /// <param name="platformConfig">The location of the configuration file</param>
+    private static async Task ChoosePlatform(string platformConfig) {
         Console.WriteLine("Welcome to CLI To Do");
         Console.WriteLine("Please choose a platform to use: ");
         Console.WriteLine("1. Microsoft To Do");
@@ -31,9 +59,11 @@ public static class CLIToDo {
         var input = UserInterface.ChoosePlatform();
         switch (input) {
             case 1:
+                await System.IO.File.WriteAllTextAsync(platformConfig, "microsoft");
                 await MicrosoftToDo();
                 break;
             case 2:
+                await System.IO.File.WriteAllTextAsync(platformConfig, "google");
                 await GoogleTasks();
                 break;
             case 3:
