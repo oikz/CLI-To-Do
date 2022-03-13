@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using CLI_To_Do.GoogleTasks;
 using CLI_To_Do.MicrosoftToDo;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.Graph;
 using Google.Apis.Tasks.v1;
 using Task = System.Threading.Tasks.Task;
@@ -41,7 +43,15 @@ public static class CLIToDo {
     }
 
     private static async Task GoogleTasks() {
-        var service = GoogleTaskHelper.CreateService(GoogleClientId, GoogleClientSecret, GoogleScopes);
+        var credentials = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\todo\\credentials.json";
+        TasksService service;
+        if (System.IO.File.Exists(credentials)) {
+            await using var stream = new FileStream(credentials, FileMode.Open, FileAccess.Read);
+            var secrets = (await GoogleClientSecrets.FromStreamAsync(stream)).Secrets;
+            service = GoogleTaskHelper.CreateService(secrets.ClientId, secrets.ClientSecret, GoogleScopes);
+        } else {
+            service = GoogleTaskHelper.CreateService(GoogleClientId, GoogleClientSecret, GoogleScopes);
+        }
 
         var task = new Google.Apis.Tasks.v1.Data.Task {
             Title = UserInterface.GetTitle()
