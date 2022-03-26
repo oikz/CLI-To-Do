@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using CLI_To_Do.MicrosoftToDo;
 using Microsoft.Graph;
 using Moq;
 using NUnit.Framework;
@@ -32,12 +33,12 @@ public class TaskHelperTests {
             }
         });
 
-        TaskHelper.GraphClient = _mockClient.Object;
+        ToDoTaskHelper.GraphClient = _mockClient.Object;
     }
 
     [Test]
     public async Task GetMeAsyncTest_Valid() {
-        var result = await TaskHelper.GetMeAsync();
+        var result = await ToDoTaskHelper.GetMeAsync();
         Assert.AreEqual("Test User", result.DisplayName);
     }
 
@@ -46,12 +47,12 @@ public class TaskHelperTests {
         _mockClient.Setup(e =>
             e.Me.Request().GetAsync(new CancellationToken()).Result).Throws(new ServiceException(new Error()));
 
-        Assert.Null(await TaskHelper.GetMeAsync());
+        Assert.Null(await ToDoTaskHelper.GetMeAsync());
     }
 
     [Test]
     public async Task GetListsTest() {
-        var result = await TaskHelper.GetLists();
+        var result = await ToDoTaskHelper.GetLists();
         Assert.AreEqual(1, result.Count);
         Assert.AreEqual("TestListId", result.CurrentPage.First().Id);
     }

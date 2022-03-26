@@ -1,11 +1,11 @@
-﻿using Microsoft.Graph;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Graph;
 
-namespace CLI_To_Do;
+namespace CLI_To_Do.MicrosoftToDo;
 
-public static class TaskHelper {
+public static class ToDoTaskHelper {
     public static GraphServiceClient GraphClient;
 
     public static void Initialize(IAuthenticationProvider authProvider) {
@@ -55,5 +55,27 @@ public static class TaskHelper {
         }
 
         return lists;
+    }
+    
+    /// <summary>
+    /// Set the task due date and reminder date for the TodoTask
+    /// </summary>
+    /// <param name="dateString">The date it is due, represented in a string</param>
+    /// <param name="newTime">The time to be reminded</param>
+    /// <param name="newTask">The TodoTask to be updated</param>
+    public static void SetDates(string dateString, DateTime newTime, TodoTask newTask) {
+        //Set all the juicy task info
+        var reminderTime = new DateTimeTimeZone {
+            ODataType = null, //Required for whatever reason
+            TimeZone = TimeZoneInfo.Local.StandardName,
+            DateTime = dateString + "T" + newTime.TimeOfDay + ".0000000"
+        };
+
+        //Only create reminder if date is not empty
+        if (newTime.TimeOfDay != new DateTime().TimeOfDay) {
+            newTask.ReminderDateTime = reminderTime;
+        }
+
+        newTask.DueDateTime = reminderTime; //Set the due date for the reminder
     }
 }

@@ -1,7 +1,7 @@
-﻿using Microsoft.Identity.Client;
-using System.IO;
+﻿using System.IO;
+using Microsoft.Identity.Client;
 
-namespace CLI_To_Do;
+namespace CLI_To_Do.MicrosoftToDo;
 
 //No idea whats really going on here I just got it from the microsoft docs
 static class TokenCacheHelper {

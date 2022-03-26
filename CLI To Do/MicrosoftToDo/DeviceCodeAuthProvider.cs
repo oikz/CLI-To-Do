@@ -6,7 +6,7 @@ using Microsoft.Graph;
 using Microsoft.Identity.Client;
 using File = System.IO.File;
 
-namespace CLI_To_Do;
+namespace CLI_To_Do.MicrosoftToDo;
 
 public class DeviceCodeAuthProvider : IAuthenticationProvider {
     private readonly IPublicClientApplication _msalClient;

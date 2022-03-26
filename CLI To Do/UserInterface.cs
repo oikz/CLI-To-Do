@@ -6,6 +6,15 @@ namespace CLI_To_Do;
 /// User interface methods for getting the user's input.
 /// </summary>
 public static class UserInterface {
+    public static int ChoosePlatform() {
+        var choices = new[] {1, 2, 3};
+        while (true) {
+            var userInput = Console.ReadLine();
+            if (int.TryParse(userInput, out var platform) && Array.Exists(choices, e => e == platform)) return platform;
+            Console.WriteLine("Please enter a valid number.");
+        }
+    }
+
     public static string GetDate() {
         //Display Calendar
         var today = DateTime.Today;
@@ -20,7 +29,7 @@ public static class UserInterface {
         Console.WriteLine("___________________");
         for (var j = 0; j < 5; j++) {
             for (var i = 0; i < 7; i++) {
-                Console.ForegroundColor = startOfWeek.Date.Equals(today.Date) ? ConsoleColor.Red : ConsoleColor.White;
+                Console.ForegroundColor = startOfWeek.Date.Equals(today.Date) ? ConsoleColor.Red : ConsoleColor.Gray;
                 Console.Write($"{startOfWeek.Day} ");
                 if (startOfWeek.Day < 10) Console.Write(" ");
                 startOfWeek = startOfWeek.AddDays(1);
