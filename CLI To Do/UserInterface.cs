@@ -29,18 +29,32 @@ public static class UserInterface {
         }
 
         var date = Console.ReadLine();
-
-        //Empty for today
-        if (date == "") {
-            return DateTime.Today.ToString("yyyy-MM-dd");
+        
+        // Various pre-defined shortcuts for the user to use.
+        switch (date.ToLower()) {
+            case "":
+                return DateTime.Today.ToString("yyyy-MM-dd");
+            case "tomorrow":
+                var newDate = DateTime.Today;
+                newDate = newDate.AddDays(1);
+                return newDate.ToString("yyyy-MM-dd");
+            case "monday":
+                return GetNextWeekday(today, DayOfWeek.Monday).ToString("yyyy-MM-dd");
+            case "tuesday":
+                return GetNextWeekday(today, DayOfWeek.Tuesday).ToString("yyyy-MM-dd");
+            case "wednesday":
+                return GetNextWeekday(today, DayOfWeek.Wednesday).ToString("yyyy-MM-dd");
+            case "thursday":
+                return GetNextWeekday(today, DayOfWeek.Thursday).ToString("yyyy-MM-dd");
+            case "friday":
+                return GetNextWeekday(today, DayOfWeek.Friday).ToString("yyyy-MM-dd");
+            case "saturday":
+                return GetNextWeekday(today, DayOfWeek.Saturday).ToString("yyyy-MM-dd");
+            case "sunday":
+                return GetNextWeekday(today, DayOfWeek.Sunday).ToString("yyyy-MM-dd");
+            
         }
-
-        //Quick shortcut for tomorrow
-        if (date.ToLower() == "tomorrow") {
-            var newDate = DateTime.Today;
-            newDate = newDate.AddDays(1);
-            return newDate.ToString("yyyy-MM-dd");
-        }
+        
 
         //Attempt to create a DateTime based on the user's inputs
         try {
@@ -50,6 +64,11 @@ public static class UserInterface {
             Console.WriteLine("Try Again");
             return GetDate();
         }
+    }
+    
+    private static DateTime GetNextWeekday(DateTime start, DayOfWeek day) {
+        var daysToAdd = ((int) day - (int) start.AddDays(1).DayOfWeek + 7) % 7;
+        return start.AddDays(daysToAdd);
     }
 
     public static DateTime GetTime() {
