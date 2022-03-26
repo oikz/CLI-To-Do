@@ -57,19 +57,19 @@ public static class UserInterface {
                 newDate = newDate.AddDays(1);
                 return newDate.ToString("yyyy-MM-dd");
             case "monday":
-                return GetNextWeekday(today, DayOfWeek.Monday).ToString("yyyy-MM-dd");
+                return GetNextWeekday(today.AddDays(1), DayOfWeek.Monday).ToString("yyyy-MM-dd");
             case "tuesday":
-                return GetNextWeekday(today, DayOfWeek.Tuesday).ToString("yyyy-MM-dd");
+                return GetNextWeekday(today.AddDays(1), DayOfWeek.Tuesday).ToString("yyyy-MM-dd");
             case "wednesday":
-                return GetNextWeekday(today, DayOfWeek.Wednesday).ToString("yyyy-MM-dd");
+                return GetNextWeekday(today.AddDays(1), DayOfWeek.Wednesday).ToString("yyyy-MM-dd");
             case "thursday":
-                return GetNextWeekday(today, DayOfWeek.Thursday).ToString("yyyy-MM-dd");
+                return GetNextWeekday(today.AddDays(1), DayOfWeek.Thursday).ToString("yyyy-MM-dd");
             case "friday":
-                return GetNextWeekday(today, DayOfWeek.Friday).ToString("yyyy-MM-dd");
+                return GetNextWeekday(today.AddDays(1), DayOfWeek.Friday).ToString("yyyy-MM-dd");
             case "saturday":
-                return GetNextWeekday(today, DayOfWeek.Saturday).ToString("yyyy-MM-dd");
+                return GetNextWeekday(today.AddDays(1), DayOfWeek.Saturday).ToString("yyyy-MM-dd");
             case "sunday":
-                return GetNextWeekday(today, DayOfWeek.Sunday).ToString("yyyy-MM-dd");
+                return GetNextWeekday(today.AddDays(1), DayOfWeek.Sunday).ToString("yyyy-MM-dd");
         }
         
 
@@ -91,7 +91,7 @@ public static class UserInterface {
     /// <param name="day">Day to look for</param>
     /// <returns>The new Date of the specified day</returns>
     private static DateTime GetNextWeekday(DateTime start, DayOfWeek day) {
-        var daysToAdd = ((int) day - (int) start.AddDays(1).DayOfWeek + 7) % 7;
+        var daysToAdd = ((int) day - (int) start.DayOfWeek + 7) % 7;
         return start.AddDays(daysToAdd);
     }
 
