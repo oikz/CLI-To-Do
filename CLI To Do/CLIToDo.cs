@@ -17,14 +17,14 @@ public static class CLIToDo {
     private static readonly string[] ToDoScopes = { "User.Read", "Tasks.Read", "Tasks.ReadWrite" };
     private static readonly string[] GoogleScopes = { TasksService.Scope.Tasks };
     
-    public static async Task Main(string[] args) {
+    public static async Task Main() {
         System.IO.Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\todo\\");
         await Platform();
     }
 
     /// <summary>
     /// This method will determine which platform the user is using and will call the appropriate method based on the
-    /// configuration text file
+    /// configuration text file.
     /// </summary>
     private static async Task Platform() {
         var platformConfig = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\todo\\platformConfig.txt";
@@ -47,9 +47,9 @@ public static class CLIToDo {
     }
 
     /// <summary>
-    /// Allow the user to select a platform to be used and save it to the configuration file
+    /// Allow the user to select a platform to be used and save it to the configuration file.
     /// </summary>
-    /// <param name="platformConfig">The location of the configuration file</param>
+    /// <param name="platformConfig">The location of the configuration file.</param>
     private static async Task ChoosePlatform(string platformConfig) {
         Console.WriteLine("Welcome to CLI To Do");
         Console.WriteLine("Please choose a platform to use: ");
@@ -72,6 +72,9 @@ public static class CLIToDo {
         }
     }
 
+    /// <summary>
+    /// Flow for authorizing and creating a reminder using the Google Tasks platform.
+    /// </summary>
     private static async Task GoogleTasks() {
         var credentials = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\todo\\credentials.json";
         TasksService service;
@@ -88,16 +91,19 @@ public static class CLIToDo {
         };
 
         var lists = GoogleTaskHelper.GetLists(service);
-        var listID = lists.ElementAt(UserInterface.GetListsHelper(lists.Count) - 1).Id; //Get the chosen list
+        var listId = lists.ElementAt(UserInterface.GetListsHelper(lists.Count) - 1).Id; //Get the chosen list
         
         //Setup the date and time for the task/reminder
         Console.WriteLine("\nDate: Format: YYYY-MM-DD (Empty for today) ");
         var dateString = UserInterface.GetDate() + "T00:00:00.000Z";
         task.Due = dateString;
 
-        await service.Tasks.Insert(task, listID).ExecuteAsync();
+        await service.Tasks.Insert(task, listId).ExecuteAsync();
     }
 
+    /// <summary>
+    /// Flow for authorizing and creating a reminder using the Microsoft To Do platform.
+    /// </summary>
     private static async Task MicrosoftToDo() {
         var authProvider = new DeviceCodeAuthProvider(ToDoAppId, ToDoScopes);
 
@@ -113,7 +119,7 @@ public static class CLIToDo {
 
         //ID for the list to add the task to
         var lists = await ToDoTaskHelper.GetLists();
-        var listID = lists.ElementAt(UserInterface.GetListsHelper(lists.Count) - 1).Id; //Get the chosen list
+        var listId = lists.ElementAt(UserInterface.GetListsHelper(lists.Count) - 1).Id; //Get the chosen list
 
         //Setup the date and time for the task/reminder
         Console.WriteLine("\nDate: Format: YYYY-MM-DD (Empty for today) ");
@@ -124,6 +130,6 @@ public static class CLIToDo {
 
         ToDoTaskHelper.SetDates(dateString, newTime, newTask);
 
-        await ToDoTaskHelper.CreateTask(newTask, listID);
+        await ToDoTaskHelper.CreateTask(newTask, listId);
     }
 }

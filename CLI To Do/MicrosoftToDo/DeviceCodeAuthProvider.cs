@@ -24,6 +24,11 @@ public class DeviceCodeAuthProvider : IAuthenticationProvider {
         TokenCacheHelper.EnableSerialization(_msalClient.UserTokenCache);
     }
 
+    /// <summary>
+    /// Retrieves a token from the local cache if available or begins the authentication flow, opening a web browser
+    /// and prompting the user to login, then saving the token locally for later use.
+    /// </summary>
+    /// <returns></returns>
     private async Task<string> GetAccessToken() {
         //First tries to get a token from the cache
         try {

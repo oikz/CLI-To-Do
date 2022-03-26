@@ -27,7 +27,7 @@ public class TaskHelperTests {
             });
 
         _mockClient.Setup(e =>
-            e.Me.Todo.Lists.Request().GetAsync(new CancellationToken()).Result).Returns(new TodoListsCollectionPage() {
+            e.Me.Todo.Lists.Request().GetAsync(new CancellationToken()).Result).Returns(new TodoListsCollectionPage {
             new() {
                 Id = "TestListId"
             }

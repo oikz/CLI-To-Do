@@ -6,7 +6,7 @@ using Microsoft.Graph;
 namespace CLI_To_Do.MicrosoftToDo;
 
 public static class ToDoTaskHelper {
-    public static GraphServiceClient GraphClient;
+    public static GraphServiceClient GraphClient { get; set; }
 
     public static void Initialize(IAuthenticationProvider authProvider) {
         GraphClient = new GraphServiceClient(authProvider);
@@ -33,10 +33,10 @@ public static class ToDoTaskHelper {
     /// Creates a task and POSTs it to Graph API
     /// </summary>
     /// <param name="newTask">The task being created</param>
-    /// <param name="listID">The ID of the list it's being added to</param>
-    public static async Task CreateTask(TodoTask newTask, string listID) {
+    /// <param name="listId">The ID of the list it's being added to</param>
+    public static async Task CreateTask(TodoTask newTask, string listId) {
         await GraphClient.Me.Todo
-            .Lists[listID]
+            .Lists[listId]
             .Tasks
             .Request()
             .AddAsync(newTask);

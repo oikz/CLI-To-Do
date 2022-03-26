@@ -42,7 +42,7 @@ public static class GoogleTaskHelper {
     /// <summary>
     /// Gets the tasks lists of the current user from the Google Tasks API
     /// </summary>
-    /// <param name="service">The service required to send the API Requets</param>
+    /// <param name="service">The service required to send the API Requests</param>
     /// <returns>A list of TaskLists</returns>
     public static IList<TaskList> GetLists(TasksService service) {
         // Define parameters of request.

@@ -6,7 +6,8 @@ CLI-To-Do is a command line tool to help you create new Tasks and Reminders usin
 
 #### Currently supported reminder platforms:
 - [Microsoft To Do](https://todo.microsoft.com/)
-- Google Tasks  
+- Google Tasks 
+  - Note: Authorization will show that this application is not verified as Google does not verify applications that don't have a specific visual Google sign in button (not achievable within a terminal).
 
 ## Usage
 - Clone this repository
@@ -15,3 +16,8 @@ CLI-To-Do is a command line tool to help you create new Tasks and Reminders usin
 e.g., `win-x64`, `osx-x64` or `linux-x64`
 - Run the executable
 - To switch between reminder platforms after choosing, delete the file "platformConfig.txt" located within the todo folder inside your user folder.
+
+## Date Shortcuts
+- "tomorrow"
+- Weekdays (e.g. "monday")
+- "" for today

@@ -4,16 +4,16 @@ using Microsoft.Identity.Client;
 namespace CLI_To_Do.MicrosoftToDo;
 
 //No idea whats really going on here I just got it from the microsoft docs
-static class TokenCacheHelper {
+internal static class TokenCacheHelper {
     public static void EnableSerialization(ITokenCache tokenCache) {
         tokenCache.SetBeforeAccess(BeforeAccessNotification);
         tokenCache.SetAfterAccess(AfterAccessNotification);
     }
 
-    public static readonly string CacheFilePath =
+    private static readonly string CacheFilePath =
         System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile) + "\\todo\\.msalcache.bin3";
 
-    private static readonly object FileLock = new object();
+    private static readonly object FileLock = new();
 
     private static void BeforeAccessNotification(TokenCacheNotificationArgs args) {
         lock (FileLock) {
@@ -25,12 +25,11 @@ static class TokenCacheHelper {
 
     private static void AfterAccessNotification(TokenCacheNotificationArgs args) {
         // if the access operation resulted in a cache update
-        if (args.HasStateChanged) {
-            lock (FileLock) {
-                // reflect changes in the persistent store
-                File.WriteAllBytes(CacheFilePath,
-                    args.TokenCache.SerializeMsalV3());
-            }
+        if (!args.HasStateChanged) return;
+        lock (FileLock) {
+            // reflect changes in the persistent store
+            File.WriteAllBytes(CacheFilePath,
+                args.TokenCache.SerializeMsalV3());
         }
     }
 }
