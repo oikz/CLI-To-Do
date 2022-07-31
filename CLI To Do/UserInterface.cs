@@ -46,6 +46,7 @@ public static class UserInterface {
             Console.Write("\n");
         }
 
+        Console.ForegroundColor = ConsoleColor.Gray;
         var date = Console.ReadLine();
         
         // Various pre-defined shortcuts for the user to use.
